@@ -132,5 +132,4 @@ python validate_output.py  # default results/test_out.csv
 - Sentence-Transformers (`all-mpnet-base-v2`)
 - LightGBM, FAISS, PaddleOCR/Tesseract
 
-## License
-Add your license of choice (e.g., MIT) to `LICENSE`.
+
