@@ -1,0 +1,281 @@
+# ⚡ Quick Start Guide - 5 Minutes to First Prediction
+
+## 🎯 Goal
+Get from zero to working predictions in 5 commands.
+
+---
+
+## 📋 Prerequisites
+- Python 3.8+
+- 10GB free disk space
+- Internet connection (for downloading models)
+
+---
+
+## 🚀 5-Step Quick Start
+
+### **Step 1: Install Dependencies (2-3 minutes)**
+```bash
+pip install torch torchvision transformers sentence-transformers lightgbm scikit-learn pandas numpy pillow requests opencv-python
+```
+
+**Optional but recommended:**
+```bash
+pip install paddleocr faiss-cpu
+```
+
+### **Step 2: Verify Setup (30 seconds)**
+```bash
+python verify_setup.py
+```
+
+Expected output:
+```
+🎉 ALL CHECKS PASSED! You're ready to train.
+```
+
+### **Step 3: Run Full Pipeline (1-2 hours on GPU, 6-8 hours on CPU)**
+```bash
+python run_pipeline.py
+```
+
+**What it does:**
+1. Trains Fusion MLP + LightGBM on 75K samples
+2. Builds FAISS retrieval index
+3. Generates predictions for 75K test samples
+4. Saves output to `results/test_out.csv`
+
+### **Step 4: Check Output**
+```bash
+# View first few predictions
+head results/test_out.csv
+```
+
+Expected format:
+```csv
+sample_id,price
+33127,4.89
+33128,12.45
+...
+```
+
+### **Step 5: Submit**
+Upload `results/test_out.csv` to competition portal.
+
+---
+
+## ⚡ Even Faster: Use Pre-trained Models
+
+If you have pre-trained models from a previous run:
+
+```bash
+python run_pipeline.py --skip_train
+```
+
+This skips training and only generates predictions (~10-15 minutes).
+
+---
+
+## 🎛️ Quick Customization
+
+### **Faster Training (Lower Accuracy)**
+```bash
+python run_pipeline.py --epochs 4 --lgb_rounds 500
+```
+
+### **Better Accuracy (Slower)**
+```bash
+python run_pipeline.py --epochs 12 --lgb_rounds 1500
+```
+
+### **Tune Ensemble Weights**
+```bash
+python run_pipeline.py --w_mlp 0.4 --w_lgb 0.4 --w_ret 0.2
+```
+
+### **CPU-Only Mode**
+```bash
+set CUDA_VISIBLE_DEVICES=
+python run_pipeline.py --batch_size 32
+```
+
+---
+
+## 🐛 Quick Troubleshooting
+
+### **Problem: Import errors**
+**Solution:**
+```bash
+pip install -r requirements.txt
+```
+
+### **Problem: Out of memory**
+**Solution:**
+```bash
+python run_pipeline.py --batch_size 32
+```
+
+### **Problem: CUDA not available**
+**Solution:** Pipeline automatically uses CPU if GPU not available.
+
+### **Problem: Slow training**
+**Solution:** Reduce dataset size for testing:
+```bash
+# Edit train.py line 101:
+df = pd.read_csv(args.train_csv).head(1000)  # Use only 1000 samples
+```
+
+---
+
+## 📊 Expected Timeline
+
+| Task | GPU (RTX 3060) | CPU |
+|------|----------------|-----|
+| Install dependencies | 2-3 min | 2-3 min |
+| Verify setup | 30 sec | 30 sec |
+| Train models | 1-2 hours | 6-8 hours |
+| Build FAISS | 1 min | 2 min |
+| Generate predictions | 10-15 min | 30-45 min |
+| **Total** | **~2 hours** | **~8 hours** |
+
+---
+
+## 🎯 Quick Validation
+
+After running pipeline, check:
+
+1. **File exists:** `results/test_out.csv`
+2. **Row count:** 75,000 rows (same as test.csv)
+3. **Columns:** `sample_id`, `price`
+4. **No missing values:** All prices should be positive floats
+
+```python
+import pandas as pd
+df = pd.read_csv('results/test_out.csv')
+print(f"Rows: {len(df)}")  # Should be 75000
+print(f"Columns: {list(df.columns)}")  # Should be ['sample_id', 'price']
+print(f"Missing: {df.isnull().sum().sum()}")  # Should be 0
+print(f"Price range: {df['price'].min():.2f} - {df['price'].max():.2f}")
+```
+
+---
+
+## 📈 Quick Performance Check
+
+Compare your predictions with sample output:
+
+```python
+import pandas as pd
+sample = pd.read_csv('dataset/sample_test_out.csv')
+yours = pd.read_csv('results/test_out.csv')
+
+# Merge and compare
+merged = sample.merge(yours, on='sample_id', suffixes=('_sample', '_yours'))
+print(merged.head())
+```
+
+---
+
+## 🔄 Quick Iteration Loop
+
+For rapid experimentation:
+
+```bash
+# 1. Train with small subset (fast)
+python train.py --train_csv dataset/train.csv --output_dir models_test --epochs 2
+
+# 2. Test prediction (fast)
+python predict.py --test_csv dataset/sample_test.csv --model_dir models_test --output_dir results_test
+
+# 3. Check results
+cat results_test/test_out.csv
+
+# 4. If good, run full pipeline
+python run_pipeline.py
+```
+
+---
+
+## 📚 Quick Reference
+
+### **Key Files:**
+- `train.py` - Training script
+- `predict.py` - Prediction script
+- `utils.py` - Core utilities
+- `run_pipeline.py` - Automated pipeline
+
+### **Key Directories:**
+- `dataset/` - Input data
+- `models/` - Trained models
+- `results/` - Predictions
+
+### **Key Commands:**
+```bash
+python verify_setup.py      # Check setup
+python run_pipeline.py       # Full pipeline
+python train.py --help       # Training options
+python predict.py --help     # Prediction options
+```
+
+---
+
+## 🎓 Quick Tips
+
+1. **Start small:** Test with sample_test.csv first
+2. **Monitor GPU:** Use `nvidia-smi` to check GPU usage
+3. **Save checkpoints:** Models are saved after each stage
+4. **Experiment:** Try different ensemble weights
+5. **Document:** Keep notes on what works
+
+---
+
+## 🏆 Quick Win Strategy
+
+**Day 1:**
+1. Run baseline: `python run_pipeline.py`
+2. Submit to leaderboard
+3. Note your score
+
+**Day 2-3:**
+1. Tune ensemble weights
+2. Increase training epochs
+3. Resubmit and compare
+
+**Day 4-5:**
+1. Train multiple models with different seeds
+2. Average predictions
+3. Final submission
+
+---
+
+## 📞 Quick Help
+
+**Stuck?** Check these files in order:
+1. `QUICK_START.md` (this file)
+2. `INSTALL.md` (detailed installation)
+3. `PIPELINE_README.md` (complete documentation)
+4. `FIXES_APPLIED.md` (known issues and solutions)
+
+---
+
+## ✅ Quick Checklist
+
+Before submitting:
+- [ ] `python verify_setup.py` passes all checks
+- [ ] `results/test_out.csv` has 75,000 rows
+- [ ] All prices are positive floats
+- [ ] Format matches `dataset/sample_test_out.csv`
+- [ ] Documentation filled out
+
+---
+
+**Ready? Let's go! 🚀**
+
+```bash
+python run_pipeline.py
+```
+
+---
+
+**Estimated time to first submission: 2-8 hours**  
+**Good luck! 🎯**

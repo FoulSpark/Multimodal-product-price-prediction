@@ -1,0 +1,43 @@
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.log
+
+# Environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+
+# Data and large artifacts (prevent >100MB files in repo)
+dataset/
+models/
+results/
+outputs/
+checkpoints/
+logs/
+
+# Model and embedding files
+*.pth
+*.pt
+*.bin
+*.pkl
+*.onnx
+*.npy
+*.npz
+*.faiss
+*.index
+
+# Notebooks checkpoints
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db

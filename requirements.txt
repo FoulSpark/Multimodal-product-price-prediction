@@ -1,0 +1,16 @@
+# PyTorch with CUDA 12.4 support - install from: https://download.pytorch.org/whl/cu124
+torch
+torchvision
+transformers
+sentence-transformers
+paddlepaddle
+paddleocr
+pytesseract
+pillow
+requests
+lightgbm
+faiss-cpu
+scikit-learn
+numpy
+pandas
+opencv-python
